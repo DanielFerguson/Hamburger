@@ -35,6 +35,8 @@ class _MyHomePageState extends State<MyHomePage> {
   TextStyle common = TextStyle(color: Colors.black);
 
   List<String> selectedDietTypes = [];
+  List<String> selectedRecipes = [];
+
   List<String> dietTypes = [
     "Vegetarian",
     "Ketogenic",
@@ -91,6 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       padding: const EdgeInsets.only(right: 8.0),
                       child: FilterChip(
                         label: Text(dietTypes[index]),
+                        selectedColor: Colors.lightBlue,
                         selected: selectedDietTypes.contains(dietTypes[index]),
                         onSelected: (bool value) {
                           setState(() {
@@ -152,7 +155,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                     Expanded(
                                       child: Column(
                                         children: [
-                                          Icon(Icons.favorite_border),
+                                          Icon(selectedRecipes.contains(
+                                                  recipes[index].title)
+                                              ? Icons.favorite
+                                              : Icons.favorite_border),
                                         ],
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
@@ -175,6 +181,28 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: new Material(
                             color: Colors.transparent,
                             child: new InkWell(
+                              onLongPress: () {
+                                setState(() {
+                                  String text = "";
+
+                                  if (selectedRecipes
+                                      .contains(recipes[index].title)) {
+                                    selectedRecipes.removeWhere((String name) =>
+                                        name == recipes[index].title);
+
+                                    text = "Removed from favourites";
+                                  } else {
+                                    selectedRecipes.add(recipes[index].title);
+                                    text = "Added to favourites";
+                                  }
+
+                                  Scaffold.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(text),
+                                    ),
+                                  );
+                                });
+                              },
                               onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -196,7 +224,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => print("Pick a random recipe!"),
+        onPressed: () {
+          setState(() {
+            print('Empty selected recipes');
+            selectedRecipes = [];
+          });
+        },
         child: Icon(Icons.shuffle),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
