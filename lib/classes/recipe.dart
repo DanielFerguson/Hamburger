@@ -5,6 +5,7 @@ class Recipe {
   int rating;
   String imageUrl;
   List<Ingredient> ingredients;
+  List<Step> steps;
 
   // TODO Get list of ingredients from all of the steps
   List<Ingredient> _reduceIngredients() {

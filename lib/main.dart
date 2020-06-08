@@ -247,9 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   int randIndex() {
-    final _random = new Random();
-
-    return _random.nextInt(recipes.length);
+    return new Random().nextInt(recipes.length);
   }
 
   static List<Recipe> _buildRecipes() {
