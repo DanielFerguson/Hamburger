@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:Hamburger/classes/recipe.dart';
 import 'package:Hamburger/icons/icons.dart';
 import 'package:Hamburger/screens/recipe.dart';
@@ -224,12 +226,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            print('Empty selected recipes');
-            selectedRecipes = [];
-          });
-        },
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RecipeRoute(recipes[randIndex()], 1),
+          ),
+        ),
         child: Icon(Icons.shuffle),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
@@ -242,6 +244,12 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return stars;
+  }
+
+  int randIndex() {
+    final _random = new Random();
+
+    return _random.nextInt(recipes.length);
   }
 
   static List<Recipe> _buildRecipes() {
