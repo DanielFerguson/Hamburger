@@ -19,17 +19,16 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        brightness: Brightness.dark,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  MyHomePage({Key key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -60,35 +59,39 @@ class _MyHomePageState extends State<MyHomePage> {
         slivers: [
           SliverAppBar(
             expandedHeight: 180,
-            floating: true,
             pinned: true,
             backgroundColor: Colors.white,
-            actions: [
-              IconButton(
-                color: Colors.black,
-                icon: Icon(Icons.favorite),
-                onPressed: () => print("Favourite"),
-              )
-            ],
+            centerTitle: true,
+            // actions: [
+            //   IconButton(
+            //     color: textBlack,
+            //     icon: Icon(Icons.favorite),
+            //     onPressed: () => print("Favourite"),
+            //   )
+            // ],
             flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
               title: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(CustomIcons.hamburger),
+                  Icon(
+                    CustomIcons.hamburger,
+                    color: textBlack,
+                  ),
                   SizedBox(width: 8),
                   Text(
                     "Hamburger",
                     style: TextStyle(color: Colors.black),
                   ),
                 ],
-                mainAxisAlignment: MainAxisAlignment.center,
               ),
             ),
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(top: 16.0),
+              padding: const EdgeInsets.only(top: 8.0),
               child: Container(
-                height: 30.0,
+                height: 50.0,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: dietTypes.length,
@@ -97,8 +100,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       padding: const EdgeInsets.only(right: 8.0),
                       child: FilterChip(
                         backgroundColor: Colors.white,
-                        label: Text(dietTypes[index]),
-                        selectedColor: Colors.lightBlue,
+                        label: Text(
+                          dietTypes[index],
+                          style: TextStyle(
+                              fontSize: 16,
+                              color:
+                                  selectedDietTypes.contains(dietTypes[index])
+                                      ? Colors.white
+                                      : textBlack),
+                        ),
+                        selectedColor: blue,
                         selected: selectedDietTypes.contains(dietTypes[index]),
                         onSelected: (bool value) {
                           setState(() {
@@ -123,7 +134,9 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 'Recipes',
-                style: header,
+                style: TextStyle(
+                  fontSize: 32,
+                ),
               ),
             ),
           ),
@@ -132,93 +145,108 @@ class _MyHomePageState extends State<MyHomePage> {
               (BuildContext context, int index) {
                 return Padding(
                   padding: const EdgeInsets.only(
-                      left: 14.0, right: 14.0, bottom: 16),
-                  child: Container(
-                    height: 260.0,
-                    child: Stack(
-                      children: [
-                        Card(
-                          child: Column(
+                      left: 16.0, right: 16.0, bottom: 16),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5.0),
+                    ),
+                    child: Container(
+                      color: white,
+                      height: 300.0,
+                      child: Stack(
+                        children: [
+                          Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.all(12.0),
+                                padding: const EdgeInsets.all(16.0),
                                 child: Row(
                                   children: [
                                     Column(
                                         children: [
                                           Text(
                                             recipes[index].title,
-                                            style: regular,
+                                            style: TextStyle(
+                                                fontSize: 20, color: textBlack),
                                           ),
                                           SizedBox(height: 8),
                                           Row(
-                                              children: _buildStarRating(
-                                                  recipes[index].rating))
+                                            children: _buildStarRating(
+                                                recipes[index].rating),
+                                          )
                                         ],
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start),
                                     Expanded(
                                       child: Column(
                                         children: [
-                                          Icon(selectedRecipes.contains(
-                                                  recipes[index].title)
-                                              ? Icons.favorite
-                                              : Icons.favorite_border),
+                                          Icon(
+                                            selectedRecipes.contains(
+                                                    recipes[index].title)
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color: textBlack,
+                                            size: 32,
+                                          ),
                                         ],
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
                                       ),
-                                    )
+                                    ),
+                                    SizedBox(width: 8)
                                   ],
                                 ),
                               ),
-                              Hero(
-                                tag: index,
-                                child: Image.network(
-                                  recipes[index].imageUrl,
-                                  fit: BoxFit.contain,
+                              Expanded(
+                                child: Hero(
+                                  tag: index,
+                                  child: Image.network(
+                                    recipes[index].imageUrl,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              )
+                              ),
                             ],
                           ),
-                        ),
-                        Positioned.fill(
-                          child: new Material(
-                            color: Colors.transparent,
-                            child: new InkWell(
-                              onLongPress: () {
-                                setState(() {
-                                  String text = "";
+                          Positioned.fill(
+                            child: new Material(
+                              color: Colors.transparent,
+                              child: new InkWell(
+                                onLongPress: () {
+                                  setState(() {
+                                    String text = "";
 
-                                  if (selectedRecipes
-                                      .contains(recipes[index].title)) {
-                                    selectedRecipes.removeWhere((String name) =>
-                                        name == recipes[index].title);
+                                    if (selectedRecipes
+                                        .contains(recipes[index].title)) {
+                                      selectedRecipes.removeWhere(
+                                          (String name) =>
+                                              name == recipes[index].title);
 
-                                    text = "Removed from favourites";
-                                  } else {
-                                    selectedRecipes.add(recipes[index].title);
-                                    text = "Added to favourites";
-                                  }
+                                      text = "Removed from favourites";
+                                    } else {
+                                      selectedRecipes.add(recipes[index].title);
+                                      text = "Added to favourites";
+                                    }
 
-                                  Scaffold.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(text),
-                                    ),
-                                  );
-                                });
-                              },
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      RecipeRoute(recipes[index], index),
+                                    Scaffold.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(text),
+                                        duration: Duration(milliseconds: 1500),
+                                      ),
+                                    );
+                                  });
+                                },
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        RecipeRoute(recipes[index], index),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -228,15 +256,25 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => RecipeRoute(recipes[randIndex()], 1),
           ),
         ),
-        child: Icon(Icons.shuffle),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        backgroundColor: Colors.white,
+        label: Text(
+          'Random',
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
+        icon: Icon(
+          Icons.shuffle,
+          color: textBlack,
+        ),
+      ),
     );
   }
 
@@ -276,7 +314,7 @@ class _MyHomePageState extends State<MyHomePage> {
           "https://i.dietdoctor.com/wp-content/uploads/2015/12/DD-14.jpg?auto=compress%2Cformat&w=600&h=338&fit=crop",
           ingredients),
       Recipe(
-          "Keto naan bread with melted garlic butter",
+          "Keto naan bread",
           4,
           "https://i.dietdoctor.com/wp-content/uploads/2016/03/DD-70.jpg?auto=compress%2Cformat&w=600&h=338&fit=crop",
           ingredients),

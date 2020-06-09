@@ -1,5 +1,6 @@
 import 'package:Hamburger/classes/recipe.dart';
 import 'package:Hamburger/icons/icons.dart';
+import 'package:Hamburger/screens/step.dart';
 import 'package:Hamburger/utils/styles.dart';
 import 'package:flutter/material.dart';
 
@@ -15,10 +16,12 @@ class RecipeRoute extends StatefulWidget {
 
 class _RecipeRouteState extends State<RecipeRoute> {
   List<String> _selectedIngredients = [];
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: background,
       body: CustomScrollView(
         slivers: [
@@ -35,6 +38,10 @@ class _RecipeRouteState extends State<RecipeRoute> {
                 StretchMode.fadeTitle,
               ],
               centerTitle: true,
+              title: Text(
+                widget.recipe.title,
+                textAlign: TextAlign.center,
+              ),
               background: Hero(
                 tag: widget.tag,
                 child: Image.network(
@@ -53,7 +60,9 @@ class _RecipeRouteState extends State<RecipeRoute> {
                 children: [
                   Text(
                     'Details',
-                    style: header,
+                    style: TextStyle(
+                      fontSize: 32,
+                    ),
                   ),
                   Padding(
                     padding:
@@ -94,10 +103,12 @@ class _RecipeRouteState extends State<RecipeRoute> {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
+              padding: const EdgeInsets.only(left: 16.0, bottom: 16.0),
               child: Text(
                 'Ingredients',
-                style: header,
+                style: TextStyle(
+                  fontSize: 32,
+                ),
               ),
             ),
           ),
@@ -107,32 +118,50 @@ class _RecipeRouteState extends State<RecipeRoute> {
                 return Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4),
-                  child: Container(
+                  child: Material(
                     color: white,
-                    child: Material(
-                      child: CheckboxListTile(
-                        contentPadding: EdgeInsets.all(0),
-                        controlAffinity: ListTileControlAffinity.leading,
-                        dense: true,
-                        title: Text(
-                          widget.recipe.ingredients[index].name,
-                          style: regular,
+                    child: Container(
+                      child: InkWell(
+                        splashColor: splashBlack,
+                        onTap: () => setState(() {
+                          if (_selectedIngredients.contains(
+                              widget.recipe.ingredients[index].name)) {
+                            _selectedIngredients.removeWhere((String name) =>
+                                name == widget.recipe.ingredients[index].name);
+                          } else {
+                            _selectedIngredients
+                                .add(widget.recipe.ingredients[index].name);
+                          }
+                        }),
+                        child: Row(
+                          children: [
+                            Theme(
+                              data: ThemeData(unselectedWidgetColor: textBlack),
+                              child: Checkbox(
+                                key: Key(widget.recipe.ingredients[index].name),
+                                value: _selectedIngredients.contains(
+                                    widget.recipe.ingredients[index].name),
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    print(value);
+                                    value
+                                        ? _selectedIngredients.add(widget
+                                            .recipe.ingredients[index].name)
+                                        : _selectedIngredients.removeWhere(
+                                            (String name) =>
+                                                name ==
+                                                widget.recipe.ingredients[index]
+                                                    .name);
+                                  });
+                                },
+                              ),
+                            ),
+                            Text(
+                              widget.recipe.ingredients[index].name,
+                              style: TextStyle(color: textBlack),
+                            )
+                          ],
                         ),
-                        key: Key(widget.recipe.ingredients[index].name),
-                        value: _selectedIngredients
-                            .contains(widget.recipe.ingredients[index].name),
-                        onChanged: (bool value) {
-                          setState(() {
-                            print(value);
-                            value
-                                ? _selectedIngredients
-                                    .add(widget.recipe.ingredients[index].name)
-                                : _selectedIngredients.removeWhere(
-                                    (String name) =>
-                                        name ==
-                                        widget.recipe.ingredients[index].name);
-                          });
-                        },
                       ),
                     ),
                   ),
@@ -143,13 +172,33 @@ class _RecipeRouteState extends State<RecipeRoute> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => print("Next - to the steps!"),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => {
+          if (_selectedIngredients.length == widget.recipe.ingredients.length)
+            {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => StepRoute(widget.recipe, widget.tag),
+                ),
+              )
+            }
+          else
+            {
+              _scaffoldKey.currentState.showSnackBar(
+                SnackBar(
+                  content: Text("Have you got all of the ingredients yet?"),
+                  duration: Duration(seconds: 3),
+                ),
+              )
+            }
+        },
         backgroundColor: Colors.white,
-        child: Icon(
-          Icons.chevron_right,
-          size: 32,
-          color: Colors.black,
+        label: Text(
+          'Let\'s Cook',
+          style: TextStyle(
+            color: Colors.black,
+          ),
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
