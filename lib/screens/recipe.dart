@@ -1,5 +1,6 @@
 import 'package:Hamburger/classes/recipe.dart';
 import 'package:Hamburger/icons/icons.dart';
+import 'package:Hamburger/utils/styles.dart';
 import 'package:flutter/material.dart';
 
 class RecipeRoute extends StatefulWidget {
@@ -18,9 +19,11 @@ class _RecipeRouteState extends State<RecipeRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: background,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            elevation: 8,
             automaticallyImplyLeading: false,
             expandedHeight: 180,
             floating: true,
@@ -50,26 +53,38 @@ class _RecipeRouteState extends State<RecipeRoute> {
                 children: [
                   Text(
                     'Details',
-                    style: TextStyle(fontSize: 24),
+                    style: header,
                   ),
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 12, bottom: 12, top: 12),
                     child: Row(
                       children: [
-                        Icon(CustomIcons.stopwatch),
-                        SizedBox(width: 8),
-                        Text("1.2 Hours")
+                        Icon(
+                          CustomIcons.stopwatch,
+                          color: white,
+                        ),
+                        SizedBox(width: 12),
+                        Text(
+                          "1.2 Hours",
+                          style: regularWhite,
+                        )
                       ],
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 12, bottom: 6),
+                    padding: const EdgeInsets.only(left: 12),
                     child: Row(
                       children: [
-                        Icon(CustomIcons.people),
-                        SizedBox(width: 8),
-                        Text("Will Feed 6 People")
+                        Icon(
+                          CustomIcons.people,
+                          color: white,
+                        ),
+                        SizedBox(width: 12),
+                        Text(
+                          "Will Feed 6 People",
+                          style: regularWhite,
+                        )
                       ],
                     ),
                   ),
@@ -82,29 +97,45 @@ class _RecipeRouteState extends State<RecipeRoute> {
               padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
               child: Text(
                 'Ingredients',
-                style: TextStyle(fontSize: 24),
+                style: header,
               ),
             ),
           ),
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
-                return CheckboxListTile(
-                  dense: true,
-                  title: Text(widget.recipe.ingredients[index].name),
-                  key: Key(widget.recipe.ingredients[index].name),
-                  value: _selectedIngredients
-                      .contains(widget.recipe.ingredients[index].name),
-                  onChanged: (bool value) {
-                    setState(() {
-                      print(value);
-                      value
-                          ? _selectedIngredients
-                              .add(widget.recipe.ingredients[index].name)
-                          : _selectedIngredients.removeWhere((String name) =>
-                              name == widget.recipe.ingredients[index].name);
-                    });
-                  },
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4),
+                  child: Container(
+                    color: white,
+                    child: Material(
+                      child: CheckboxListTile(
+                        contentPadding: EdgeInsets.all(0),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        dense: true,
+                        title: Text(
+                          widget.recipe.ingredients[index].name,
+                          style: regular,
+                        ),
+                        key: Key(widget.recipe.ingredients[index].name),
+                        value: _selectedIngredients
+                            .contains(widget.recipe.ingredients[index].name),
+                        onChanged: (bool value) {
+                          setState(() {
+                            print(value);
+                            value
+                                ? _selectedIngredients
+                                    .add(widget.recipe.ingredients[index].name)
+                                : _selectedIngredients.removeWhere(
+                                    (String name) =>
+                                        name ==
+                                        widget.recipe.ingredients[index].name);
+                          });
+                        },
+                      ),
+                    ),
+                  ),
                 );
               },
               childCount: widget.recipe.ingredients.length,

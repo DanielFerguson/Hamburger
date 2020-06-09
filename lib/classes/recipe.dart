@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 class Recipe {
   String title;
   int rating;

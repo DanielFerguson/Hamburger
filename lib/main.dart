@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:Hamburger/classes/recipe.dart';
 import 'package:Hamburger/icons/icons.dart';
 import 'package:Hamburger/screens/recipe.dart';
+import 'package:Hamburger/utils/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:icon_shadow/icon_shadow.dart';
 
 void main() {
   runApp(MyApp());
@@ -53,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.black54,
+      backgroundColor: background,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -94,6 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     return Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: FilterChip(
+                        backgroundColor: Colors.white,
                         label: Text(dietTypes[index]),
                         selectedColor: Colors.lightBlue,
                         selected: selectedDietTypes.contains(dietTypes[index]),
@@ -120,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 'Recipes',
-                style: TextStyle(fontSize: 24),
+                style: header,
               ),
             ),
           ),
@@ -145,7 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         children: [
                                           Text(
                                             recipes[index].title,
-                                            style: TextStyle(fontSize: 18),
+                                            style: regular,
                                           ),
                                           SizedBox(height: 8),
                                           Row(
@@ -240,7 +243,10 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Widget> _buildStarRating(int rating) {
     List<Widget> stars = [];
     for (var i = 0; i < 5; i++) {
-      stars.add(rating > i ? Icon(Icons.star) : Icon(Icons.star_border));
+      stars.add(rating > i
+          ? IconShadowWidget(Icon(Icons.star, color: gold, size: 24),
+              shadowColor: Colors.black12)
+          : Icon(Icons.star_border));
     }
 
     return stars;
